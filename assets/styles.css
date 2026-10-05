@@ -1,0 +1,537 @@
+/* =========================================================================
+   Story page — styles
+
+   Palette is pastel: pink leads, sky blue supports. Pastels wash out as text
+   on a pale background, so the light theme uses deeper, desaturated versions
+   of the same hues rather than the pastel values directly. Every
+   text/background pair clears WCAG AA (4.5:1) in both themes.
+
+   Two themes, both driven by data-theme on <html>. Light wins if the reader
+   prefers light and has never touched the toggle.
+   ========================================================================= */
+
+:root {
+  --measure: 34rem;
+
+  /* Pastels: pink leads, sky blue supports. */
+  --ink:        #eceaf2;
+  --ink-soft:   #a3a1b0;
+  --ink-faint:  #8b899b;
+  --bg:         #0c0c0f;
+  --bg-raise:   #151519;
+  --bg-sunken:  #08080a;
+  --line:       #2a2932;
+  --line-soft:  #1b1b22;
+  --accent:     #f0b6c9;
+  --accent-dim: #96566b;
+  --accent-2:   #a8d3f0;
+  --accent-2-dim: #4a7ba6;
+  --shadow:     0 1px 0 rgba(0,0,0,.5);
+
+  /* Quote tints. The wash/border colour is the pastel itself; the text colour
+     deepens in the light theme, where a pastel would be unreadable. */
+  --qc-tint-pink: #f0b6c9;  --qc-ink-pink: #f0b6c9;
+  --qc-tint-blue: #a8d3f0;  --qc-ink-blue: #a8d3f0;
+  --qc-tint-mint: #a8e0c8;  --qc-ink-mint: #a8e0c8;
+  --qc-tint-lilac: #c9b6ef; --qc-ink-lilac: #c9b6ef;
+  --qc-tint-peach: #f5c9a3; --qc-ink-peach: #f5c9a3;
+  --qc-tint-plain: #a3a1b0; --qc-ink-plain: #a3a1b0;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+           Georgia, "Times New Roman", serif;
+  --sans:  ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+           sans-serif;
+
+  --ease: cubic-bezier(.2,.7,.3,1);
+}
+
+/* Pastel tints go muddy as text on a pale background, so the light theme
+   uses deeper, desaturated versions of the same hues. */
+[data-theme="light"] {
+  --ink:        #1b1b22;
+  --ink-soft:   #5b5a68;
+  --ink-faint:  #6b6a78;
+  --bg:         #f8f7fb;
+  --bg-raise:   #ffffff;
+  --bg-sunken:  #f0eff6;
+  --line:       #dcdbe8;
+  --line-soft:  #e9e8f2;
+  --accent:     #ab4a68;
+  --accent-dim: #dd93ac;
+  --accent-2:   #2a6a99;
+  --accent-2-dim: #8fb8de;
+  --shadow:     0 1px 0 rgba(0,0,0,.04);
+  --qc-ink-pink: #983350;  --qc-ink-blue: #1b5679;  --qc-ink-mint: #2f6b52;
+  --qc-ink-lilac: #5b4a8a; --qc-ink-peach: #8a5228; --qc-ink-plain: #5b5a68;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme-set]) {
+    --ink: #1b1b22; --ink-soft: #5b5a68; --ink-faint: #6b6a78;
+    --bg: #f8f7fb; --bg-raise: #ffffff; --bg-sunken: #f0eff6;
+    --line: #dcdbe8; --line-soft: #e9e8f2;
+    --accent: #ab4a68; --accent-dim: #dd93ac;
+    --accent-2: #2a6a99; --accent-2-dim: #8fb8de;
+    --shadow: 0 1px 0 rgba(0,0,0,.04);
+    --qc-ink-pink: #983350;  --qc-ink-blue: #1b5679;  --qc-ink-mint: #2f6b52;
+    --qc-ink-lilac: #5b4a8a; --qc-ink-peach: #8a5228; --qc-ink-plain: #5b5a68;
+  }
+}
+
+* { box-sizing: border-box; }
+
+/* class rules below set `display`, which would otherwise beat [hidden] */
+[hidden] { display: none !important; }
+
+:root {
+  --radius: 14px;
+  --noise: .05;
+}
+
+[data-theme="light"] { --noise: .035; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint duotone wash so the dark theme isn't flat. */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .55;
+  background:
+    radial-gradient(1100px 620px at 50% -10%,
+      color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    radial-gradient(760px 520px at 88% 6%,
+      color-mix(in srgb, var(--accent-2) 6%, transparent), transparent 72%);
+}
+
+/* Paper tooth, so the flat colour has some grain to it. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: var(--noise);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.bar, .resume, .stage, .foot { position: relative; z-index: 1; }
+
+/* ---------- header ---------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.bar__title {
+  margin: 0;
+  font-size: .8rem;
+  font-weight: 500;
+  font-family: var(--sans);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.bar__actions { display: flex; align-items: center; gap: .9rem; }
+
+/* One dot per choice taken, alternating pink and sky. */
+.bar__path {
+  display: flex;
+  align-items: center;
+  gap: .32rem;
+  min-height: .5rem;
+}
+
+.trail__dot {
+  width: .42rem;
+  height: .42rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.trail__dot:nth-child(even) {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-2) 18%, transparent);
+}
+
+.icon-btn {
+  width: 2rem; height: 2rem;
+  display: grid; place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: .95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color .2s var(--ease), color .2s var(--ease),
+              transform .2s var(--ease);
+}
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: rotate(-18deg);
+}
+
+/* ---------- resume banner ---------- */
+
+.resume {
+  margin: 1.25rem auto 0;
+  width: min(var(--measure), calc(100% - 3rem));
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  background: var(--bg-raise);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  border-radius: var(--radius);
+}
+.resume__text {
+  margin: 0;
+  flex: 1 1 14rem;
+  font-size: .95rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.resume__actions { display: flex; gap: .5rem; }
+
+/* ---------- stage ---------- */
+
+.stage {
+  flex: 1;
+  width: min(var(--measure), calc(100% - 3rem));
+  margin: 0 auto;
+  padding: 3.5rem 0 4rem;
+}
+
+.scene { animation: rise .45s var(--ease) both; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.scene__chapter {
+  margin: 0 0 1.5rem;
+  font-family: var(--sans);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.scene__chapter:empty { display: none; }
+
+.scene__body {
+  overflow-wrap: break-word;
+}
+.scene__body > :first-child { margin-top: 0; }
+.scene__body > :last-child { margin-bottom: 0; }
+
+.scene__body p { margin: 0 0 1.25em; hyphens: auto; }
+.scene__body em { color: var(--ink); }
+.scene__body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-dim);
+  text-underline-offset: .18em;
+  transition: text-decoration-color .18s var(--ease);
+}
+.scene__body a:hover { text-decoration-color: var(--accent); }
+.scene__body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .85em;
+  color: var(--ink-soft);
+}
+.scene__body pre {
+  margin: 0 0 1.25em;
+  padding: .9rem 1rem;
+  overflow-x: auto;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  font-size: .82em;
+  line-height: 1.55;
+}
+.scene__body pre code { color: var(--ink-soft); }
+/* A plain `>` quote keeps the sky-blue default. Tag it in the Markdown with
+   ::: colour fences to pick another: pink, blue, mint, lilac, peach, plain. */
+.scene__body blockquote {
+  --qc-tint: var(--accent-2);
+  --qc-ink: var(--ink-soft);
+  margin: 0 0 1.25em;
+  padding: .8rem 1.1rem;
+  background: color-mix(in srgb, var(--qc-tint) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--qc-tint) 26%, transparent);
+  border-left: 3px solid var(--qc-tint);
+  border-radius: 4px var(--radius) var(--radius) 4px;
+  font-style: italic;
+  color: var(--qc-ink);
+}
+.scene__body blockquote > :last-child { margin-bottom: 0; }
+
+.scene__body blockquote.q-pink  { --qc-tint: var(--qc-tint-pink);  --qc-ink: var(--qc-ink-pink); }
+.scene__body blockquote.q-blue  { --qc-tint: var(--qc-tint-blue);  --qc-ink: var(--qc-ink-blue); }
+.scene__body blockquote.q-mint  { --qc-tint: var(--qc-tint-mint);  --qc-ink: var(--qc-ink-mint); }
+.scene__body blockquote.q-lilac { --qc-tint: var(--qc-tint-lilac); --qc-ink: var(--qc-ink-lilac); }
+.scene__body blockquote.q-peach { --qc-tint: var(--qc-tint-peach); --qc-ink: var(--qc-ink-peach); }
+.scene__body blockquote.q-plain { --qc-tint: var(--qc-tint-plain); --qc-ink: var(--qc-ink-plain); }
+.scene__body hr {
+  margin: 2.2rem auto;
+  width: 34%;
+  border: 0;
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+.scene__body hr::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 .5rem;
+  background: var(--bg);
+  color: var(--accent-2);
+  font-size: .7rem;
+  line-height: 1;
+}
+.scene__body ul, .scene__body ol {
+  margin: 0 0 1.25em;
+  padding-left: 1.4rem;
+}
+.scene__body li { margin-bottom: .35em; }
+.scene__body li > ul, .scene__body li > ol { margin: .35em 0 0; }
+.scene__body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.scene__body h1, .scene__body h2, .scene__body h3,
+.scene__body h4, .scene__body h5, .scene__body h6 {
+  margin: 1.8em 0 .6em;
+  font-family: var(--sans);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.scene__body h1 { font-size: .88rem; }
+.scene__body table {
+  width: 100%;
+  margin: 0 0 1.25em;
+  border-collapse: collapse;
+  font-size: .85em;
+}
+.scene__body th, .scene__body td {
+  padding: .45em .5em;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+}
+.scene__body th {
+  font-family: var(--sans);
+  font-size: .82em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* typing caret */
+.scene__body .caret {
+  display: inline-block;
+  width: .5ch;
+  margin-left: .06em;
+  border-bottom: 2px solid var(--accent);
+  animation: blink 1s steps(2, start) infinite;
+  vertical-align: baseline;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- choices ---------- */
+
+.choices {
+  margin-top: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  padding-top: .4rem;
+}
+.choices:empty { display: none; }
+
+/* A small ornament between the prose and the way forward. */
+.choices::before {
+  content: "✦ ✦ ✦";
+  order: -1;
+  margin-bottom: .3rem;
+  text-align: center;
+  font-size: .6rem;
+  letter-spacing: .55em;
+  text-indent: .55em;
+  color: var(--accent-2);
+  opacity: .75;
+}
+
+.choice {
+  /* each card takes one of the two accents, in turn */
+  --tint: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  width: 100%;
+  padding: .95rem 1.15rem;
+  text-align: left;
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  color: var(--ink);
+  background: var(--bg-raise);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: border-color .18s var(--ease),
+              background-color .18s var(--ease),
+              transform .18s var(--ease),
+              box-shadow .18s var(--ease);
+}
+.choices .choice:nth-child(even) { --tint: var(--accent-2); }
+
+.choice > span { order: 1; }
+
+.choice:hover:not(:disabled),
+.choice:focus-visible:not(:disabled) {
+  border-color: var(--tint);
+  background: color-mix(in srgb, var(--tint) 9%, var(--bg-raise));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--tint) 55%, transparent);
+}
+
+/* the arrow only shows on approach */
+.choice > .choice__mark {
+  order: 2;
+  margin-left: auto;
+  flex: none;
+  color: var(--tint);
+  font-family: var(--sans);
+  font-size: .85rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .18s var(--ease), transform .18s var(--ease);
+}
+.choice:hover:not(:disabled) > .choice__mark,
+.choice:focus-visible:not(:disabled) > .choice__mark {
+  opacity: 1;
+  transform: none;
+}
+
+.choice:disabled {
+  cursor: not-allowed;
+  color: var(--ink-faint);
+  border-style: dashed;
+  background: transparent;
+}
+.choice:disabled > .choice__mark { display: none; }
+
+/* ---------- back / restart ---------- */
+
+.scene__back { margin: 2rem 0 0; }
+.scene__restart { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+
+.scene__ending-note {
+  flex: 1 0 100%;
+  margin: 0 0 .5rem;
+  font-family: var(--sans);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.scene__ending-note::before { content: "✦ "; color: var(--accent-2); }
+
+.link-btn {
+  padding: 0;
+  background: none;
+  border: 0;
+  font-family: var(--sans);
+  font-size: .78rem;
+  letter-spacing: .08em;
+  color: var(--ink-faint);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color .18s var(--ease), border-color .18s var(--ease);
+}
+.link-btn:hover { color: var(--accent); border-bottom-color: var(--accent-dim); }
+
+.btn {
+  padding: .65rem 1.2rem;
+  font-family: var(--sans);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--bg-raise);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: border-color .18s var(--ease), color .18s var(--ease),
+              transform .18s var(--ease);
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.btn--primary { border-color: var(--accent); color: var(--accent); }
+.btn--ghost { background: transparent; }
+
+/* ---------- footer ---------- */
+
+.foot {
+  padding: 1.25rem 1.5rem 2.5rem;
+  text-align: center;
+}
+
+/* ---------- focus ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- motion & print ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .scene { animation: none; }
+}
+
+@media print {
+  .bar, .foot, .resume, .choices, .scene__back, .scene__restart { display: none; }
+  .stage { width: 100%; padding: 0; }
+  .grain { display: none; }
+}

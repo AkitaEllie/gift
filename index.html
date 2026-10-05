@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Story</title>
+<meta name="description" content="An interactive story.">
+<meta property="og:title" content="The Story">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="bar">
+  <h1 class="bar__title" id="story-title">The Story</h1>
+  <div class="bar__actions">
+    <span class="bar__path" id="path-label" aria-live="off"></span>
+    <button type="button" class="icon-btn" id="theme-toggle" aria-label="Switch to light theme" title="Switch theme">
+      <span aria-hidden="true" id="theme-icon">☾</span>
+    </button>
+  </div>
+</header>
+
+<div class="resume" id="resume" hidden>
+  <p class="resume__text" id="resume-text"></p>
+  <div class="resume__actions">
+    <button type="button" class="btn btn--primary" id="resume-go">Continue</button>
+    <button type="button" class="btn" id="resume-drop">Start over</button>
+  </div>
+</div>
+
+<main class="stage" id="stage">
+  <article class="scene" id="scene" aria-live="polite">
+    <p class="scene__chapter" id="scene-chapter"></p>
+    <div class="scene__body" id="scene-body"></div>
+    <nav class="choices" id="choices" aria-label="Story choices"></nav>
+    <p class="scene__back" id="back-wrap" hidden>
+      <button type="button" class="link-btn" id="back-btn">&larr; Go back</button>
+    </p>
+    <div class="scene__restart" id="restart-wrap" hidden>
+      <p class="scene__ending-note">You have reached an ending.</p>
+      <button type="button" class="btn" id="restart-btn">Read it again</button>
+      <button type="button" class="btn btn--ghost" id="alternate-btn">Try another path</button>
+    </div>
+  </article>
+</main>
+
+<footer class="foot">
+  <button type="button" class="link-btn" id="reset-all">Reset all progress</button>
+</footer>
+
+<script src="assets/vendor/marked.umd.js"></script>
+<script src="assets/vendor/purify.min.js"></script>
+<script src="assets/story.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
