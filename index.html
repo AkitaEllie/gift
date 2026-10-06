@@ -11,12 +11,19 @@
 </head>
 <body>
 
+<div class="ambient" id="ambient" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
 <header class="bar">
   <h1 class="bar__title" id="story-title">The Story</h1>
   <div class="bar__actions">
     <span class="bar__path" id="path-label" aria-live="off"></span>
+    <select class="field" id="ambient-select" aria-label="Background animation">
+      <option value="off">Still</option>
+      <option value="drift">Drift</option>
+      <option value="aurora">Aurora</option>
+      <option value="motes">Motes</option>
+    </select>
     <button type="button" class="icon-btn" id="theme-toggle" aria-label="Switch to light theme" title="Switch theme">
       <span aria-hidden="true" id="theme-icon">☾</span>
     </button>

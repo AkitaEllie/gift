@@ -76,6 +76,18 @@ flagged as an ending. Branches pointing at scenes you haven't written yet
 appear greyed out as `[unwritten scene]` rather than breaking the page, so you
 can write linearly and branch later.
 
+## Background animation
+
+The picker in the header offers three ambient backgrounds behind the text:
+
+- **Still** — nothing moving (the default)
+- **Drift** — three large slow colour blobs
+- **Aurora** — soft diagonal ribbons sweeping across
+- **Motes** — pastel dust drifting upward
+
+Your choice is remembered in the browser. Nothing moves under
+`prefers-reduced-motion: reduce` — the shapes are still drawn, but frozen.
+
 ## Previewing
 
 Open `index.html` directly, or serve the folder:

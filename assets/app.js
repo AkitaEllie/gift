@@ -17,6 +17,8 @@
 
   var STORE_KEY = 'story:visited:v1';
   var THEME_KEY = 'story:theme';
+  var AMBIENT_KEY = 'story:ambient';
+  var AMBIENT_MODES = ['off', 'drift', 'aurora', 'motes'];
   var SPEED = 20;          // ms per character, for a short scene
   var SPEED_CAP = 40;      // long scenes slow down rather than crawl forever
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -42,6 +44,8 @@
     alternateBtn: document.getElementById('alternate-btn'),
     themeBtn: document.getElementById('theme-toggle'),
     themeIcon:document.getElementById('theme-icon'),
+    ambient: document.getElementById('ambient'),
+    ambientSelect: document.getElementById('ambient-select'),
     resetAll: document.getElementById('reset-all')
   };
 
@@ -70,6 +74,71 @@
       dot.className = 'trail__dot';
       el.path.appendChild(dot);
     }
+  }
+
+  /* ------------------------------------------------------ ambient background */
+
+  /* Built in JS rather than markup so a mode costs nothing until it is picked.
+     Only transform/opacity are animated (see styles.css), so this is
+     compositor work and does not touch layout. */
+  var AMBIENT_COLOURS = ['--accent', '--accent-2', '--qc-tint-mint', '--qc-tint-lilac'];
+
+  function renderAmbient(mode) {
+    if (AMBIENT_MODES.indexOf(mode) < 0) mode = 'off';
+    el.ambient.innerHTML = '';
+    el.root.setAttribute('data-ambient', mode);
+
+    if (mode === 'drift') {
+      ['--accent', '--accent-2', '--qc-tint-lilac'].forEach(function (v, i) {
+        var blob = document.createElement('span');
+        blob.className = 'blob blob--' + i;
+        blob.style.background =
+          'radial-gradient(circle at 50% 50%, color-mix(in srgb, var(' + v +
+          ') 55%, transparent), transparent 70%)';
+        el.ambient.appendChild(blob);
+      });
+      return;
+    }
+
+    if (mode === 'aurora') {
+      for (var i = 0; i < 3; i++) {
+        var band = document.createElement('span');
+        band.className = 'band band--' + i;
+        el.ambient.appendChild(band);
+      }
+      return;
+    }
+
+    if (mode === 'motes') {
+      for (var m = 0; m < 18; m++) {
+        var mote = document.createElement('span');
+        mote.className = 'mote';
+        var size = 4 + Math.round(Math.random() * 9);
+        mote.style.width = size + 'px';
+        mote.style.height = size + 'px';
+        mote.style.left = (Math.random() * 100).toFixed(2) + '%';
+        mote.style.background = 'var(' + AMBIENT_COLOURS[m % AMBIENT_COLOURS.length] + ')';
+        var dur = 14 + Math.random() * 16;
+        mote.style.animationDuration = dur.toFixed(1) + 's';
+        // Stagger with a negative delay so they are already mid-flight, but
+        // keep it inside the duration — a delay longer than the cycle parks
+        // the mote at the start and it never appears.
+        mote.style.animationDelay = (-(Math.random() * dur)).toFixed(1) + 's';
+        el.ambient.appendChild(mote);
+      }
+    }
+  }
+
+  function initAmbient() {
+    var saved = null;
+    try { saved = localStorage.getItem(AMBIENT_KEY); } catch (e) {}
+    if (AMBIENT_MODES.indexOf(saved) < 0) saved = 'off';   // opt-in, never assumed
+    el.ambientSelect.value = saved;
+    renderAmbient(saved);
+    el.ambientSelect.addEventListener('change', function () {
+      renderAmbient(el.ambientSelect.value);
+      try { localStorage.setItem(AMBIENT_KEY, el.ambientSelect.value); } catch (e) {}
+    });
   }
 
   function current() {
@@ -572,6 +641,7 @@
     el.title.textContent = story.title || 'The Story';
     document.title = story.title || 'The Story';
     initTheme();
+    initAmbient();
 
     el.backBtn.addEventListener('click', back);
     el.restartBtn.addEventListener('click', restart);
