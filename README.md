@@ -68,6 +68,36 @@ Only `http(s)`, `mailto` and relative links survive sanitizing. Bare
 `#fragment` links are stripped, because the engine uses the URL fragment to
 remember which scene you are on. Choice *labels* are plain text, not Markdown.
 
+### Ending markers
+
+The line and buttons on an ending can be rewritten. Set them once for the
+whole story under `endings`:
+
+```js
+endings: {
+  note: "You have reached an ending.",
+  restart: "Read it again",
+  alternate: "Try another path"
+}
+```
+
+...or override any individual ending scene with `endingUI`:
+
+```js
+"ending_arrive": {
+  text: `...`,
+  ending: true,
+  endingUI: {
+    note: "She signs her own name, and does not look up.",
+    alternate: ""          // empty string hides that button
+  }
+}
+```
+
+Scene-level wins over story-level, and anything you leave out falls through to
+the defaults. An empty string hides that piece; set all three empty and the
+ending shows no marker at all.
+
 ### Finding problems
 
 Open the browser console while writing. On load the engine checks every link

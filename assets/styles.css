@@ -564,14 +564,15 @@ body {
 .scene__back { margin: 2rem 0 0; }
 .scene__restart { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: .6rem; }
 
+/* Sentence case, not a shouty label: this line is often written by the
+   author, and uppercase flattened it. */
 .scene__ending-note {
   flex: 1 0 100%;
-  margin: 0 0 .5rem;
+  margin: 0 0 .6rem;
   font-family: var(--sans);
-  font-size: .72rem;
-  font-weight: 600;
-  letter-spacing: .18em;
-  text-transform: uppercase;
+  font-size: .82rem;
+  font-weight: 500;
+  line-height: 1.5;
   color: var(--accent);
 }
 .scene__ending-note::before { content: "✦ "; color: var(--accent-2); }

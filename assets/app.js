@@ -40,6 +40,7 @@
     backWrap: document.getElementById('back-wrap'),
     backBtn:  document.getElementById('back-btn'),
     restartWrap: document.getElementById('restart-wrap'),
+    endingNote: document.getElementById('ending-note'),
     restartBtn: document.getElementById('restart-btn'),
     alternateBtn: document.getElementById('alternate-btn'),
     themeBtn: document.getElementById('theme-toggle'),
@@ -464,6 +465,7 @@
 
     if (scene.ending) {
       el.restartWrap.hidden = false;
+      applyEndingUi(scene);
     } else {
       buildChoices(scene);
     }
@@ -471,6 +473,39 @@
     history.replaceState(null, '', '#' + encodeURIComponent(visited[visited.length - 1]));
     save();
     if (!opts || !opts.keepScroll) window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  /* ------------------------------------------------------- ending markers */
+
+  /* An ending's marker text can be set once for the whole story under
+     STORY.endings, and overridden on any individual ending scene with
+     `endingUI`. An empty string hides that piece entirely. */
+  var ENDING_DEFAULTS = {
+    note: 'You have reached an ending.',
+    restart: 'Read it again',
+    alternate: 'Try another path'
+  };
+
+  function applyEndingUi(scene) {
+    var ui = {};
+    var sources = [ENDING_DEFAULTS, story && story.endings, scene.endingUI];
+    sources.forEach(function (src) {
+      if (!src || typeof src !== 'object') return;
+      Object.keys(ENDING_DEFAULTS).forEach(function (key) {
+        if (typeof src[key] === 'string') ui[key] = src[key];
+      });
+    });
+
+    var note = ui.note || '';
+    el.endingNote.textContent = note;
+    el.endingNote.hidden = !note;
+
+    ['restart', 'alternate'].forEach(function (key) {
+      var btn = key === 'restart' ? el.restartBtn : el.alternateBtn;
+      var label = ui[key] || '';
+      btn.textContent = label;
+      btn.hidden = !label;
+    });
   }
 
   function buildChoices(scene) {
